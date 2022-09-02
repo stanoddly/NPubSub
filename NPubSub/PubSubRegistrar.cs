@@ -6,13 +6,13 @@ namespace NPubSub;
 public class PubSubRegistrar
 {
     // "!" because obviously these calls will always return a method
-    private static readonly MethodInfo _eventBusSubscribe = typeof(ConcurrentPubSub).GetMethod(nameof(ConcurrentPubSub.Subscribe))!;
-    private static readonly MethodInfo _eventBusUnsubscribe = typeof(ConcurrentPubSub).GetMethod(nameof(ConcurrentPubSub.Unsubscribe))!;
-    private static readonly MethodInfo _eventBusPublish = typeof(ConcurrentPubSub).GetMethod(nameof(ConcurrentPubSub.PublishAsync))!;
-    private static readonly Type _genericSubscriptionDelegateType = typeof(SubscribeCallback<>);
+    private static readonly MethodInfo PubSubSubscribe = typeof(IPubSub).GetMethod(nameof(IPubSub.Subscribe))!;
+    private static readonly MethodInfo PubSubUnsubscribe = typeof(IPubSub).GetMethod(nameof(IPubSub.Unsubscribe))!;
+    private static readonly MethodInfo PubSubPublishAsync = typeof(IPubSub).GetMethod(nameof(IPubSub.PublishAsync))!;
+    private static readonly Type GenericSubscriptionDelegateType = typeof(SubscribeCallback<>);
 
     private readonly IPubSub _pubSub;
-    private readonly Dictionary<Type, Registration> registrations = new();
+    private readonly Dictionary<Type, Registration> _registrations = new();
 
     public PubSubRegistrar(IPubSub pubSub)
     {
@@ -21,7 +21,7 @@ public class PubSubRegistrar
 
     private bool TryGetRegistration(Type type, [MaybeNullWhen(false)] out Registration result)
     {
-        return registrations.TryGetValue(type, out result);
+        return _registrations.TryGetValue(type, out result);
     }
 
     private Registration CreateRegistration(Type type)
@@ -52,11 +52,11 @@ public class PubSubRegistrar
             ParameterInfo firstParameterInfo = parameters[0];
             Type eventType = firstParameterInfo.ParameterType;
             // create a delegate from SubscriptionDelegate with event type
-            Type specializedDelegateType = _genericSubscriptionDelegateType.MakeGenericType(eventType);
-            MethodInfo eventBusSubscribeSpecialized = _eventBusSubscribe.MakeGenericMethod(eventType);
-            MethodInfo eventBusUnsubscribeSpecialized = _eventBusUnsubscribe.MakeGenericMethod(eventType);
+            Type specializedDelegateType = GenericSubscriptionDelegateType.MakeGenericType(eventType);
+            MethodInfo pubSubSubscribeSpecialized = PubSubSubscribe.MakeGenericMethod(eventType);
+            MethodInfo pubSubUnsubscribeSpecialized = PubSubUnsubscribe.MakeGenericMethod(eventType);
 
-            registeredSubscriptions.Add(new RegisteredSubscription(methodInfo, eventBusSubscribeSpecialized, eventBusUnsubscribeSpecialized, specializedDelegateType, subscriberAttribute.Order));
+            registeredSubscriptions.Add(new RegisteredSubscription(methodInfo, pubSubSubscribeSpecialized, pubSubUnsubscribeSpecialized, specializedDelegateType, subscriberAttribute.Order));
         }
 
         List<RegisteredPublication> registeredPublications = new();
@@ -80,19 +80,19 @@ public class PubSubRegistrar
                 Type publicationDelegate = typeof(PublishHandler<>);
                 Type specializedDelegateType = publicationDelegate.MakeGenericType(eventType);
 
-                MethodInfo eventBusPublish = _eventBusPublish.MakeGenericMethod(eventType);
+                MethodInfo pubSubPublish = PubSubPublishAsync.MakeGenericMethod(eventType);
 
-                registeredPublications.Add(new RegisteredPublication(eventInfo, eventBusPublish, specializedDelegateType));
+                registeredPublications.Add(new RegisteredPublication(eventInfo, pubSubPublish, specializedDelegateType));
             }
         }
 
         Registration registration = new Registration(registeredSubscriptions, registeredPublications);
-        registrations.Add(type, registration);
+        _registrations.Add(type, registration);
 
         return registration;
     }
 
-    private void SubscribeRegistreeToEventBus(List<RegisteredSubscription> registeredSubscriptions, IPubSub pubSub, object registeree)
+    private void SubscribeRegistreeToPubSub(List<RegisteredSubscription> registeredSubscriptions, IPubSub pubSub, object registeree)
     {
         foreach (RegisteredSubscription registeredSubscription in registeredSubscriptions)
         {
@@ -103,7 +103,7 @@ public class PubSubRegistrar
         }
     }
 
-    private void SubscribeEventBusToRegistree(List<RegisteredPublication> registeredPublications, IPubSub pubSub, object registeree)
+    private void SubscribePubSubToRegistree(List<RegisteredPublication> registeredPublications, IPubSub pubSub, object registeree)
     {
         foreach (RegisteredPublication registeredPublication in registeredPublications)
         {
@@ -117,8 +117,8 @@ public class PubSubRegistrar
         Type type = registree.GetType();
         Registration registration = CreateRegistration(type);
 
-        SubscribeRegistreeToEventBus(registration.RegisteredSubscriptions, _pubSub, registree);
-        SubscribeEventBusToRegistree(registration.RegisteredPublication, _pubSub, registree);
+        SubscribeRegistreeToPubSub(registration.RegisteredSubscriptions, _pubSub, registree);
+        SubscribePubSubToRegistree(registration.RegisteredPublication, _pubSub, registree);
     }
 
     public void Unregister(object registree)
@@ -126,11 +126,11 @@ public class PubSubRegistrar
         Type type = registree.GetType();
         Registration registration = CreateRegistration(type);
 
-        UnsubscribeRegistreeFromEventBus(registration.RegisteredSubscriptions, _pubSub, registree);
-        UnsubscribeEventBusFromRegistree(registration.RegisteredPublication, _pubSub, registree);
+        UnsubscribeRegistreeFromPubSub(registration.RegisteredSubscriptions, _pubSub, registree);
+        UnsubscribePubSubFromRegistree(registration.RegisteredPublication, _pubSub, registree);
     }
 
-    private void UnsubscribeRegistreeFromEventBus(List<RegisteredSubscription> registeredSubscriptions, IPubSub pubSub, object registeree)
+    private void UnsubscribeRegistreeFromPubSub(List<RegisteredSubscription> registeredSubscriptions, IPubSub pubSub, object registeree)
     {
         foreach (RegisteredSubscription registeredSubscription in registeredSubscriptions)
         {
@@ -140,7 +140,7 @@ public class PubSubRegistrar
         }
     }
 
-    private void UnsubscribeEventBusFromRegistree(List<RegisteredPublication> registeredPublications, IPubSub pubSub, object registeree)
+    private void UnsubscribePubSubFromRegistree(List<RegisteredPublication> registeredPublications, IPubSub pubSub, object registeree)
     {
         foreach (RegisteredPublication registeredPublication in registeredPublications)
         {

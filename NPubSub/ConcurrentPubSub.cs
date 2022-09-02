@@ -2,19 +2,6 @@ using Nito.AsyncEx;
 
 namespace NPubSub;
 
-public delegate Task SubscribeCallback<in TEvent>(TEvent e);
-
-public delegate Task PublishHandler<in TEvent>(TEvent e);
-
-internal record SubscribeCallbackItem<TEventArgs>(SubscribeCallback<TEventArgs> Callback, int Order);
-
-public interface IPubSub
-{
-    void Subscribe<TEvent>(SubscribeCallback<TEvent> subscribeCallback, int order = int.MaxValue);
-    bool Unsubscribe<TEvent>(SubscribeCallback<TEvent> subscribeCallback);
-    Task PublishAsync<TEventArgs>(TEventArgs e);
-}
-
 public class ConcurrentPubSub : IPubSub
 {
     private readonly PubSub _pubSub = new();

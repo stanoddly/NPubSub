@@ -11,7 +11,7 @@ namespace NPubSub.Tests
 
         public Task OnTestEventAsync(TestEvent testEvent)
         {
-            return TestEventHandler?.Invoke(testEvent) ?? Task.CompletedTask;
+            return TestEventHandler.SafeInvoke(testEvent);
         }
     }
 
@@ -57,6 +57,7 @@ namespace NPubSub.Tests
         }
     }
 
+    [TestFixture]
     public class RegistrationTests
     {
         private IPubSub _pubSub = null!;
@@ -68,7 +69,7 @@ namespace NPubSub.Tests
             _pubSub = new ConcurrentPubSub();
             _pubSubRegistrar = new PubSubRegistrar(_pubSub);
         }
-        
+
         [Test]
         public async Task TestRegistration()
         {
@@ -124,7 +125,7 @@ namespace NPubSub.Tests
         }
 
         [Test]
-        public async Task TestUnregistrationPublish()
+        public async Task TestUnregisterPublish()
         {
             TestSubscriber testSubscriber = new();
             TestPublisher testPublisher1 = new();

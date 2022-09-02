@@ -4,6 +4,8 @@ namespace NPubSub;
 
 public class PubSub: IPubSub
 {
+    private record SubscribeCallbackItem<TEventArgs>(SubscribeCallback<TEventArgs> Callback, int Order);
+    
     private readonly Dictionary<Type, IList> _subscriptionsPerType = new();
     public void Subscribe<TEvent>(SubscribeCallback<TEvent> subscribeCallback, int order = Int32.MaxValue)
     {
