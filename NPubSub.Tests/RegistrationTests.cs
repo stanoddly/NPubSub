@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using NPubSub.ReflectionRegistration;
 using NUnit.Framework;
 
 namespace NPubSub.Tests

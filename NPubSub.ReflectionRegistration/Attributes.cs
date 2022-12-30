@@ -1,4 +1,4 @@
-﻿namespace NPubSub;
+﻿namespace NPubSub.ReflectionRegistration;
 
 [AttributeUsage(AttributeTargets.Method)]
 public class SubscriberAttribute : Attribute
