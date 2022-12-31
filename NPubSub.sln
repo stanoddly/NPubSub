@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPubSub.Tests", "NPubSub.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPubSub.ReflectionRegistration", "NPubSub.ReflectionRegistration\NPubSub.ReflectionRegistration.csproj", "{44305F1A-B225-4B8D-9072-DB0DD96D8BE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NPubSub.Concurrent", "NPubSub.Concurrent\NPubSub.Concurrent.csproj", "{21143A5A-2740-48FA-B866-BF4FE661937F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{44305F1A-B225-4B8D-9072-DB0DD96D8BE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44305F1A-B225-4B8D-9072-DB0DD96D8BE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44305F1A-B225-4B8D-9072-DB0DD96D8BE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21143A5A-2740-48FA-B866-BF4FE661937F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21143A5A-2740-48FA-B866-BF4FE661937F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21143A5A-2740-48FA-B866-BF4FE661937F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21143A5A-2740-48FA-B866-BF4FE661937F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

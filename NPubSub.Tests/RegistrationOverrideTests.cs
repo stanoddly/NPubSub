@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using NPubSub.Concurrent;
 using NPubSub.ReflectionRegistration;
 using NUnit.Framework;
 

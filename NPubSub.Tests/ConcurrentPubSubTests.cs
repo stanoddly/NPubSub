@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using NPubSub.Concurrent;
+using NUnit.Framework;
 
 namespace NPubSub.Tests;
 

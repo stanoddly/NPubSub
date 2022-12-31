@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NPubSub.Concurrent\NPubSub.Concurrent.csproj" />
     <ProjectReference Include="..\NPubSub.ReflectionRegistration\NPubSub.ReflectionRegistration.csproj" />
     <ProjectReference Include="..\NPubSub\NPubSub.csproj" />
   </ItemGroup>

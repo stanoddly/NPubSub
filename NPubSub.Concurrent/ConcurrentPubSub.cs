@@ -1,6 +1,6 @@
 using Nito.AsyncEx;
 
-namespace NPubSub;
+namespace NPubSub.Concurrent;
 
 public class ConcurrentPubSub : IPubSub
 {
